@@ -19,8 +19,9 @@ const Home = () => {
   const [allPosts, setAllPosts] = useState(null);
   
   const [searchText, setSearchText] = useState('');
+  const [searchedResults, setSearchedResults] = useState(null);
   const [searchTimeout, setSearchTimeout] = useState(null);
-  const [searchedResults, setSearchedResults] = useState(null)
+
 
   // fetching all our posts shared by community
   const fetchPosts = async () => {
@@ -51,7 +52,16 @@ const Home = () => {
   }, [])
   
   const handleSearchChange = (e) => {
+    clearTimeout(searchTimeout)
+    setSearchText(e.target.value)
 
+    // setting a debounce - sets limit to how often a function is called
+    setSearchTimeout(
+      setTimeout(() => {
+        const searchResult = allPosts.filter((item) => item.name.toLowerCase().includes(searchText.toLowerCase()) || item.prompt.toLowerCase().includes(searchText.toLowerCase()));
+        setSearchedResults(searchResult);
+      }, 300),
+    );
   }
 
   return (
